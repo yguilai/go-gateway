@@ -1,11 +1,15 @@
 package router
 
 import (
-	"github.com/e421083458/golang_common/lib"
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
+	"github.com/yguilai/go-gateway/common/lib"
+	"github.com/yguilai/go-gateway/controller"
 	"github.com/yguilai/go-gateway/docs"
+	"github.com/yguilai/go-gateway/middleware"
+	"log"
 )
 
 // @title Swagger Example API
@@ -70,6 +74,40 @@ func InitRouter(middlewares ...gin.HandlerFunc) *gin.Engine {
 		})
 	})
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	store, err := sessions.NewRedisStore(
+		10,
+		"tcp",
+		"localhost:6379",
+		"",
+		[]byte("ssss"),
+	)
+	if err != nil {
+		log.Fatalf("sessions.NewRedisStore Error: %v\n", err)
+	}
+
+	signGroup := router.Group("/sign")
+	signGroup.Use(
+		sessions.Sessions("mysession", store),
+		middleware.RecoveryMiddleware(),
+		middleware.RequestLog(),
+		middleware.TranslationMiddleware(),
+	)
+	{
+		controller.RegsiterAdminSignController(signGroup)
+	}
+
+	adminGroup := router.Group("/admin")
+	adminGroup.Use(
+		sessions.Sessions("mysession", store),
+		middleware.RecoveryMiddleware(),
+		middleware.RequestLog(),
+		middleware.SessionAuthMiddleware(),
+		middleware.TranslationMiddleware(),
+	)
+	{
+		controller.RegisterAdminController(adminGroup)
+	}
 
 	return router
 }

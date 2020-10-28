@@ -2,8 +2,8 @@ package router
 
 import (
 	"context"
-	"github.com/e421083458/golang_common/lib"
 	"github.com/gin-gonic/gin"
+	"github.com/yguilai/go-gateway/common/lib"
 	"log"
 	"net/http"
 	"time"
@@ -14,8 +14,9 @@ var (
 )
 
 func HttpServerRun() {
-	gin.SetMode(lib.ConfBase.DebugMode)
+	gin.SetMode(lib.GetStringConf("base.base.debug_mode"))
 	r := InitRouter()
+
 	HttpSrvHandler = &http.Server{
 		Addr:           lib.GetStringConf("base.http.addr"),
 		Handler:        r,
@@ -24,7 +25,7 @@ func HttpServerRun() {
 		MaxHeaderBytes: 1 << uint(lib.GetIntConf("base.http.max_header_bytes")),
 	}
 	go func() {
-		log.Printf(" [INFO] HttpServerRun:%s\n",lib.GetStringConf("base.http.addr"))
+		log.Printf(" [INFO] HttpServerRun:%s\n", lib.GetStringConf("base.http.addr"))
 		if err := HttpSrvHandler.ListenAndServe(); err != nil {
 			log.Fatalf(" [ERROR] HttpServerRun:%s err:%v\n", lib.GetStringConf("base.http.addr"), err)
 		}

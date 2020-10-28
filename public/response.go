@@ -1,10 +1,10 @@
-package middleware
+package public
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/e421083458/golang_common/lib"
 	"github.com/gin-gonic/gin"
+	"github.com/yguilai/go-gateway/common/lib"
 	"strings"
 )
 
@@ -24,11 +24,11 @@ const (
 )
 
 type Response struct {
-	ErrorCode ResponseCode `json:"errno"`
-	ErrorMsg  string       `json:"errmsg"`
-	Data      interface{}  `json:"data"`
-	TraceId   interface{}  `json:"trace_id"`
-	Stack     interface{}  `json:"stack"`
+	Code    ResponseCode `json:"code"`
+	Msg     string       `json:"msg"`
+	Data    interface{}  `json:"data,omitempty"`
+	TraceId interface{}  `json:"trace_id"`
+	Stack   interface{}  `json:"stack,omitempty"`
 }
 
 func ResponseError(c *gin.Context, code ResponseCode, err error) {
@@ -44,7 +44,7 @@ func ResponseError(c *gin.Context, code ResponseCode, err error) {
 		stack = strings.Replace(fmt.Sprintf("%+v", err), err.Error()+"\n", "", -1)
 	}
 
-	resp := &Response{ErrorCode: code, ErrorMsg: err.Error(), Data: "", TraceId: traceId, Stack: stack}
+	resp := &Response{Code: code, Msg: err.Error(), Data: "", TraceId: traceId, Stack: stack}
 	c.JSON(200, resp)
 	response, _ := json.Marshal(resp)
 	c.Set("response", string(response))
@@ -59,7 +59,7 @@ func ResponseSuccess(c *gin.Context, data interface{}) {
 		traceId = traceContext.TraceId
 	}
 
-	resp := &Response{ErrorCode: SuccessCode, ErrorMsg: "", Data: data, TraceId: traceId}
+	resp := &Response{Code: SuccessCode, Msg: "", Data: data, TraceId: traceId}
 	c.JSON(200, resp)
 	response, _ := json.Marshal(resp)
 	c.Set("response", string(response))

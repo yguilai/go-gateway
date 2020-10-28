@@ -1,28 +1,53 @@
 definitions:
-  dto.DemoInput:
+  dto.AdminInfoOutput:
     properties:
-      age:
-        example: 20
-        type: integer
-      name:
-        example: 姓名
+      avatar:
+        description: '...其他字段'
         type: string
-      passwd:
+      id:
+        type: integer
+      introduction:
+        type: string
+      login_time:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      username:
+        type: string
+    type: object
+  dto.AdminInput:
+    properties:
+      password:
         example: "123456"
         type: string
+      username:
+        example: admin
+        type: string
     required:
-    - age
-    - name
-    - passwd
+    - password
+    - username
     type: object
-  middleware.Response:
+  dto.AdminOutput:
     properties:
+      token:
+        example: token
+        type: string
+    type: object
+  dto.UpdatePwdInput:
+    properties:
+      password:
+        type: string
+    type: object
+  public.Response:
+    properties:
+      code:
+        type: integer
       data:
         type: object
-      errmsg:
+      msg:
         type: string
-      errno:
-        type: integer
       stack:
         type: object
       trace_id:
@@ -30,21 +55,13 @@ definitions:
     type: object
 info:
   contact: {}
-  license: {}
 paths:
-  /demo/bind:
-    post:
+  /admin/info:
+    get:
       consumes:
       - application/json
-      description: 测试数据绑定
-      operationId: /demo/bind
-      parameters:
-      - description: body
-        in: body
-        name: polygon
-        required: true
-        schema:
-          $ref: '#/definitions/dto.DemoInput'
+      description: 管理员信息
+      operationId: /admin/info
       produces:
       - application/json
       responses:
@@ -52,12 +69,79 @@ paths:
           description: success
           schema:
             allOf:
-            - $ref: '#/definitions/middleware.Response'
+            - $ref: '#/definitions/public.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.DemoInput'
+                  $ref: '#/definitions/dto.AdminInfoOutput'
               type: object
-      summary: 测试数据绑定
+      summary: 管理员信息
       tags:
-      - 用户
+      - 管理员接口
+  /admin/update_pwd:
+    post:
+      consumes:
+      - application/json
+      description: 管理员修改密码
+      operationId: /admin/update_pwd
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdatePwdInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/public.Response'
+      summary: 管理员修改密码
+      tags:
+      - 管理员接口
+  /sign/in:
+    post:
+      consumes:
+      - application/json
+      description: 管理员登录
+      operationId: /sign/in
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AdminInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/public.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.AdminOutput'
+              type: object
+      summary: 管理员登录
+      tags:
+      - 管理员接口
+  /sign/out:
+    post:
+      consumes:
+      - application/json
+      description: 管理员注销登录
+      operationId: /sign/out
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/public.Response'
+      summary: 管理员注销登录
+      tags:
+      - 管理员接口
 swagger: "2.0"

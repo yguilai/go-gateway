@@ -1,15 +1,19 @@
 package main
 
 import (
-	"github.com/e421083458/golang_common/lib"
+	"github.com/yguilai/go-gateway/common/lib"
 	"github.com/yguilai/go-gateway/router"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
 )
 
 func main() {
-	lib.InitModule("./conf/dev/", []string{"base", "mysql", "redis"})
+	err := lib.InitModule("./conf/dev/", []string{"base", "mysql", "redis"})
+	if err != nil {
+		log.Println(err)
+	}
 	defer lib.Destroy()
 	router.HttpServerRun()
 

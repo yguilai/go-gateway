@@ -19,15 +19,14 @@ var doc = `{
         "description": "{{.Description}}",
         "title": "{{.Title}}",
         "contact": {},
-        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/demo/bind": {
-            "post": {
-                "description": "测试数据绑定",
+        "/admin/info": {
+            "get": {
+                "description": "管理员信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -35,18 +34,89 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户"
+                    "管理员接口"
                 ],
-                "summary": "测试数据绑定",
-                "operationId": "/demo/bind",
+                "summary": "管理员信息",
+                "operationId": "/admin/info",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/public.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.AdminInfoOutput"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/update_pwd": {
+            "post": {
+                "description": "管理员修改密码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员接口"
+                ],
+                "summary": "管理员修改密码",
+                "operationId": "/admin/update_pwd",
                 "parameters": [
                     {
                         "description": "body",
-                        "name": "polygon",
+                        "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.DemoInput"
+                            "$ref": "#/definitions/dto.UpdatePwdInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/public.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/sign/in": {
+            "post": {
+                "description": "管理员登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员接口"
+                ],
+                "summary": "管理员登录",
+                "operationId": "/sign/in",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AdminInput"
                         }
                     }
                 ],
@@ -56,13 +126,13 @@ var doc = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/middleware.Response"
+                                    "$ref": "#/definitions/public.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.DemoInput"
+                                            "$ref": "#/definitions/dto.AdminOutput"
                                         }
                                     }
                                 }
@@ -71,42 +141,105 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/sign/out": {
+            "post": {
+                "description": "管理员注销登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员接口"
+                ],
+                "summary": "管理员注销登录",
+                "operationId": "/sign/out",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/public.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "dto.DemoInput": {
+        "dto.AdminInfoOutput": {
             "type": "object",
-            "required": [
-                "age",
-                "name",
-                "passwd"
-            ],
             "properties": {
-                "age": {
-                    "type": "integer",
-                    "example": 20
+                "avatar": {
+                    "description": "...其他字段",
+                    "type": "string"
                 },
-                "name": {
-                    "type": "string",
-                    "example": "姓名"
+                "id": {
+                    "type": "integer"
                 },
-                "passwd": {
-                    "type": "string",
-                    "example": "123456"
+                "introduction": {
+                    "type": "string"
+                },
+                "login_time": {
+                    "type": "string"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
-        "middleware.Response": {
+        "dto.AdminInput": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "123456"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "admin"
+                }
+            }
+        },
+        "dto.AdminOutput": {
             "type": "object",
             "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "token"
+                }
+            }
+        },
+        "dto.UpdatePwdInput": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "public.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
                 "data": {
                     "type": "object"
                 },
-                "errmsg": {
+                "msg": {
                     "type": "string"
-                },
-                "errno": {
-                    "type": "integer"
                 },
                 "stack": {
                     "type": "object"
