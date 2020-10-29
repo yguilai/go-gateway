@@ -122,5 +122,17 @@ func InitRouter(middlewares ...gin.HandlerFunc) *gin.Engine {
 		controller.RegisterService(serviceGroup)
 	}
 
+	appGroup := router.Group("/apps")
+	appGroup.Use(
+		sessionMd,
+		middleware.RecoveryMiddleware(),
+		middleware.RequestLog(),
+		middleware.SessionAuthMiddleware(),
+		middleware.TranslationMiddleware(),
+	)
+	{
+		controller.RegisterAppController(appGroup)
+	}
+
 	return router
 }

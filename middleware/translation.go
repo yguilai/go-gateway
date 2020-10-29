@@ -48,16 +48,35 @@ func TranslationMiddleware() gin.HandlerFunc {
 			// 自定义验证规则
 			//验证服务名
 			val.RegisterValidation("valid_service_name", func(fl validator.FieldLevel) bool {
-				matched, _ := regexp.Match(`[a-zA-Z0-9_]{6,128}`, []byte(fl.Field().String()))
+				matched, _ := regexp.Match(`^[a-zA-Z0-9_]{6,128}$`, []byte(fl.Field().String()))
 				return matched
 			})
-
-			//验证规则
 			val.RegisterValidation("valid_rule", func(fl validator.FieldLevel) bool {
 				matched, _ := regexp.Match(`^\S+$`, []byte(fl.Field().String()))
 				return matched
 			})
-			// 验证'ip:port'列表
+			val.RegisterValidation("valid_url_rewrite", func(fl validator.FieldLevel) bool {
+				if fl.Field().String() == "" {
+					return true
+				}
+				for _, ms := range strings.Split(fl.Field().String(), ",") {
+					if len(strings.Split(ms, " ")) != 2 {
+						return false
+					}
+				}
+				return true
+			})
+			val.RegisterValidation("valid_header_transfor", func(fl validator.FieldLevel) bool {
+				if fl.Field().String() == "" {
+					return true
+				}
+				for _, ms := range strings.Split(fl.Field().String(), ",") {
+					if len(strings.Split(ms, " ")) != 3 {
+						return false
+					}
+				}
+				return true
+			})
 			val.RegisterValidation("valid_ipportlist", func(fl validator.FieldLevel) bool {
 				for _, ms := range strings.Split(fl.Field().String(), ",") {
 					if matched, _ := regexp.Match(`^\S+\:\d+$`, []byte(ms)); !matched {
@@ -66,7 +85,6 @@ func TranslationMiddleware() gin.HandlerFunc {
 				}
 				return true
 			})
-			// 验证ip列表
 			val.RegisterValidation("valid_iplist", func(fl validator.FieldLevel) bool {
 				if fl.Field().String() == "" {
 					return true
@@ -79,22 +97,9 @@ func TranslationMiddleware() gin.HandlerFunc {
 				}
 				return true
 			})
-			// 验证权重列表
 			val.RegisterValidation("valid_weightlist", func(fl validator.FieldLevel) bool {
 				for _, ms := range strings.Split(fl.Field().String(), ",") {
 					if matched, _ := regexp.Match(`^\d+$`, []byte(ms)); !matched {
-						return false
-					}
-				}
-				return true
-			})
-			//验证url重写
-			val.RegisterValidation("valid_url_rewrite", func(fl validator.FieldLevel) bool {
-				if fl.Field().String() == "" {
-					return true
-				}
-				for _, ms := range strings.Split(fl.Field().String(), ",") {
-					if len(strings.Split(ms, " ")) != 2 {
 						return false
 					}
 				}
@@ -121,6 +126,12 @@ func TranslationMiddleware() gin.HandlerFunc {
 				return ut.Add("valid_url_rewrite", "{0} 不符合输入格式", true)
 			}, func(ut ut.Translator, fe validator.FieldError) string {
 				t, _ := ut.T("valid_url_rewrite", fe.Field())
+				return t
+			})
+			val.RegisterTranslation("valid_header_transfor", trans, func(ut ut.Translator) error {
+				return ut.Add("valid_header_transfor", "{0} 不符合输入格式", true)
+			}, func(ut ut.Translator, fe validator.FieldError) string {
+				t, _ := ut.T("valid_header_transfor", fe.Field())
 				return t
 			})
 			val.RegisterTranslation("valid_ipportlist", trans, func(ut ut.Translator) error {
