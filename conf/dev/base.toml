@@ -5,7 +5,7 @@
     time_location="Asia/Chongqing"
 
 [http]
-    addr =":8880"                       # 监听地址, default ":8700"
+    addr =":8880"                       # 监听地址, default ":8880"
     read_timeout = 10                   # 读取超时时长
     write_timeout = 10                  # 写入超时时长
     max_header_bytes = 20               # 最大的header大小，二进制位长度
@@ -25,6 +25,11 @@
     [log.console_writer]        #工作台输出
         on = false
         color = false
+
+[cluster]
+    cluster_ip="127.0.0.1"
+    cluster_port="8080"
+    cluster_ssl_port="4433"
 
 [swagger]
     title="go-gateway swagger API"

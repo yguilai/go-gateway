@@ -12,6 +12,17 @@ func DefaultGetValidParams(c *gin.Context, params interface{}) error {
 	if err := c.ShouldBind(params); err != nil {
 		return err
 	}
+	return validate(c, params)
+}
+
+func UriGetValidParams(c *gin.Context, params interface{}) error {
+	if err := c.ShouldBindUri(params); err != nil {
+		return err
+	}
+	return validate(c, params)
+}
+
+func validate(c *gin.Context, params interface{}) error {
 	//获取验证器
 	valid, err := GetValidator(c)
 	if err != nil {
@@ -25,7 +36,7 @@ func DefaultGetValidParams(c *gin.Context, params interface{}) error {
 	err = valid.Struct(params)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
-		sliceErrs := []string{}
+		sliceErrs := make([]string, 0)
 		for _, e := range errs {
 			sliceErrs = append(sliceErrs, e.Translate(trans))
 		}

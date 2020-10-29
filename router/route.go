@@ -85,21 +85,22 @@ func InitRouter(middlewares ...gin.HandlerFunc) *gin.Engine {
 	if err != nil {
 		log.Fatalf("sessions.NewRedisStore Error: %v\n", err)
 	}
+	sessionMd := sessions.Sessions("mysession", store)
 
 	signGroup := router.Group("/sign")
 	signGroup.Use(
-		sessions.Sessions("mysession", store),
+		sessionMd,
 		middleware.RecoveryMiddleware(),
 		middleware.RequestLog(),
 		middleware.TranslationMiddleware(),
 	)
 	{
-		controller.RegsiterAdminSignController(signGroup)
+		controller.RegisterAdminSignController(signGroup)
 	}
 
 	adminGroup := router.Group("/admin")
 	adminGroup.Use(
-		sessions.Sessions("mysession", store),
+		sessionMd,
 		middleware.RecoveryMiddleware(),
 		middleware.RequestLog(),
 		middleware.SessionAuthMiddleware(),
@@ -107,6 +108,18 @@ func InitRouter(middlewares ...gin.HandlerFunc) *gin.Engine {
 	)
 	{
 		controller.RegisterAdminController(adminGroup)
+	}
+
+	serviceGroup := router.Group("/services")
+	serviceGroup.Use(
+		sessionMd,
+		middleware.RecoveryMiddleware(),
+		middleware.RequestLog(),
+		middleware.SessionAuthMiddleware(),
+		middleware.TranslationMiddleware(),
+	)
+	{
+		controller.RegisterService(serviceGroup)
 	}
 
 	return router

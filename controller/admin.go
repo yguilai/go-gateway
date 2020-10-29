@@ -14,14 +14,14 @@ import (
 
 const DB_SCOPE = "default"
 
-func RegsiterAdminSignController(r *gin.RouterGroup)  {
+func RegisterAdminSignController(r *gin.RouterGroup)  {
 	r.POST("/in", AdminLogin)
 	r.POST("/out", AdminLogout)
 }
 
 func RegisterAdminController(r *gin.RouterGroup) {
 	r.GET("/info", AdminInfo)
-	r.POST("/update-pwd", AdminUpdatePwd)
+	r.PUT("/update-pwd", AdminUpdatePwd)
 }
 
 // AdminLogin godoc
@@ -45,7 +45,7 @@ func AdminLogin(c *gin.Context) {
 	admin := &dao.Admin{}
 	tx, err := lib.GetGormPool(DB_SCOPE)
 	if err != nil {
-		public.ResponseError(c, 1002, err)
+		public.ResponseError(c, public.GetGormPoolErrorCode, err)
 		return
 	}
 	admin, err = admin.LoginCheck(c, tx, p)
@@ -122,7 +122,7 @@ func AdminInfo(c *gin.Context) {
 // @Produce json
 // @Param body body dto.UpdatePwdInput true "body"
 // @Success 200 {object} public.Response{} "success"
-// @Router /admin/update_pwd [POST]
+// @Router /admin/update_pwd [PUT]
 func AdminUpdatePwd(c *gin.Context)  {
 	p := &dto.UpdatePwdInput{}
 
@@ -141,7 +141,7 @@ func AdminUpdatePwd(c *gin.Context)  {
 
 	tx, err := lib.GetGormPool(DB_SCOPE)
 	if err != nil {
-		public.ResponseError(c, 1008, err)
+		public.ResponseError(c, public.GetGormPoolErrorCode, err)
 		return
 	}
 

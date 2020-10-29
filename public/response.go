@@ -51,6 +51,10 @@ func ResponseError(c *gin.Context, code ResponseCode, err error) {
 	c.AbortWithError(200, err)
 }
 
+func ResponseSuccessWithoutData(c *gin.Context) {
+	ResponseSuccess(c, nil)
+}
+
 func ResponseSuccess(c *gin.Context, data interface{}) {
 	trace, _ := c.Get("trace")
 	traceContext, _ := trace.(*lib.TraceContext)
