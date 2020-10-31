@@ -24,8 +24,8 @@ var DateFormat = "2006-01-02"
 var LocalIP = net.ParseIP("127.0.0.1")
 
 // InitModule 函数传入配置文件 InitModule("./conf/dev/")
-func InitModule(configPath string, configs []string) error {
-	return initModule(configPath, configs)
+func InitModule(configPath string) error {
+	return initModule(configPath, []string{"base", "mysql", "redis"})
 }
 
 func initModule(configPath string, modules []string) error {
