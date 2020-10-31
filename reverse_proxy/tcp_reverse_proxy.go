@@ -2,8 +2,8 @@ package reverse_proxy
 
 import (
 	"context"
-	"github.com/e421083458/go_gateway/reverse_proxy/load_balance"
-	"github.com/e421083458/go_gateway/tcp_proxy_middleware"
+	"github.com/yguilai/go-gateway/reverse_proxy/load_balance"
+	"github.com/yguilai/go-gateway/tcp_proxy_middleware"
 	"io"
 	"log"
 	"net"

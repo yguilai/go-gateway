@@ -22,11 +22,12 @@ require (
 	github.com/lib/pq v1.8.0 // indirect
 	github.com/mattn/go-sqlite3 v1.14.4 // indirect
 	github.com/pkg/errors v0.8.1
-	google.golang.org/grpc v1.30.0-dev.1
 	github.com/spf13/viper v1.7.0
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.5
+	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
+	google.golang.org/grpc v1.30.0-dev.1
 	gopkg.in/go-playground/validator.v9 v9.29.0
 )
 
