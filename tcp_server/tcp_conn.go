@@ -55,5 +55,5 @@ func (c *conn) serve(ctx context.Context)  {
 		panic("handler is empty")
 	}
 
-	c.server.Handler.ServerTCP(ctx, c.rwc)
+	c.server.Handler.ServeTCP(ctx, c.rwc)
 }

@@ -56,7 +56,7 @@ type TcpSliceRouterHandler struct {
 func (w *TcpSliceRouterHandler) ServeTCP(ctx context.Context, conn net.Conn) {
 	c := newTcpSliceRouterContext(conn, w.router, ctx)
 	c.handlers = append(c.handlers, func(c *TcpSliceRouterContext) {
-		w.coreFunc(c).ServerTCP(ctx, conn)
+		w.coreFunc(c).ServeTCP(ctx, conn)
 	})
 	c.Reset()
 	c.Next()
